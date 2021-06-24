@@ -11,6 +11,7 @@ module.exports = {
       extend: {
         colors: {
           'myblack': '#252525',
+          'mydark': '#3B3B3B',
           'mygreen': '#9DB899',
           'myfade-brown': '#FFCDAA',
           'mybold-brown': '#ED897F',
