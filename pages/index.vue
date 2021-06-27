@@ -64,11 +64,42 @@
     <!-- Display when there is notes save -->
     <div class="notes absolute left-0 top-20 z-20" v-show="notes.length !== 0">
       <div class="notes-list relative container mx-auto pt-16 pl-10 flex flex-wrap">
-        <div class="notes-item w-56 p-4 ml-2 mt-2 rounded-xl" :class="`bg-${item.bgColor}`" v-for="(item, index) in notes" :key="index">
+        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in notes" :key="index" @click="showDetail(index)">
           <h2 class="text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
-          <p class="text-lg text-mydark font-medium mt-2">{{ item.date }}</p>
+          <p class="text-lg text-mydark font-medium mt-1">{{ item.date }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Display the note details -->
+    <div class="new-note fixed top-0 left-0 h-screen flex items-center justify-center bg-mygreen z-50" v-show="showNoteDetail">
+      <div class="form-field border border-mydark bg-myblack rounded-xl">
+        <div class="form-nav w-full h-12 mt-4 flex items-center justify-between">
+          <div class="cancel-btn ml-4">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="closeNote">
+              close
+            </button>
+          </div>
+          <div class="save-btn mr-4 flex items-center">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="deleteNote">
+              <img src="~/assets/icons/trash.svg" alt="trash icon" class="w-6 h-6 py-1">
+            </button>
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl ml-2" @click="editNote">
+              edit
+            </button>
+          </div>
+        </div>
+        <div class="form relative px-5 mt-8">
+          <h2 class="title text-3xl text-white font-semibold">
+            {{ noteDetail.title }}
+          </h2>
+          <p class="date text-mydark text-lg font-medium mt-4">
+            {{ noteDetail.date }}
+          </p>
+          <p class="content h-72 text-lg text-mygray font-normal mt-4">
+            {{ noteDetail.content }}
+          </p>
         </div>
       </div>
     </div>
@@ -81,7 +112,10 @@ export default {
     return {
       newNote: false,
       color: 'myfade-brown',
-      notes: []
+      notes: [],
+      noteDetail: '',
+      noteIndex: 0,
+      showNoteDetail: false
     }
   },
   mounted () {
@@ -137,10 +171,6 @@ export default {
     // function to save new note
     saveNote () {
       const today = new Date()
-      // const hour = today.getHours()
-      // const minutes = today.getMinutes()
-      // let normalHour = hour
-      // let normalMinutes = minutes
       const dd = String(today.getDate()).padStart(2, '0')
       const mm = String(today.getMonth() + 1).padStart(2, '0')
       const yyyy = today.getFullYear()
@@ -154,19 +184,10 @@ export default {
         date: '',
         bgColor: ''
       }
-      // check time frame
-      // if (hour <= 9) {
-      //   normalHour = `0${hour}`
-      // }
-      // if (minutes <= 9) {
-      //   normalMinutes = `0${minutes}`
-      // }
-      // set note item color
       note.id = Math.random() * 10
       note.title = title.value
       note.content = content.value
       note.date = mm + '/' + dd + '/' + yyyy
-      //  + ', ' + normalHour + ':' + normalMinutes
       note.bgColor = this.color
       // check if note field is empty
       if (note.title !== '' || note.content !== '') {
@@ -183,6 +204,29 @@ export default {
     // funtion to cancel new note creation
     cancelCreateNote () {
       this.newNote = !this.newNote
+    },
+    // function to show note detail
+    showDetail (index) {
+      this.showNoteDetail = !this.showNoteDetail
+      this.noteIndex = index
+      this.noteDetail = this.notes[index]
+    },
+    // function to close note detail
+    closeNote () {
+      this.showNoteDetail = !this.showNoteDetail
+    },
+    // function to edit note when it already create
+    editNote () {
+      return 'bonjour'
+    },
+    // function to delete note
+    deleteNote () {
+      this.showNoteDetail = !this.showNoteDetail
+      if (this.noteIndex > -1) {
+        this.notes.splice(this.noteIndex, 1)
+        localStorage.setItem('notes', JSON.stringify(this.notes))
+      }
+      this.noteIndex = 0
     }
   }
 }
@@ -221,5 +265,17 @@ textarea {
 
 .red, .green, .fade-brown, .bold-brown {
   cursor: pointer;
+}
+
+.notes-item {
+  cursor: pointer;
+}
+
+.content {
+  overflow-y: auto;
+}
+
+.trash {
+  z-index: 99 !important;
 }
 </style>
