@@ -14,7 +14,8 @@
       id="search"
       placeholder="Search a note..."
       autocomplete="off"
-      class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50">
+      class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
+      v-model="searchValue">
     </div>
     <button class="fixed bottom-12 right-10 text-white bg-black px-6 py-3 rounded-xl z-50" @click="createNote">
       New note +
@@ -61,14 +62,15 @@
         No note saved.
       </p>
     </div>
-    <!-- Display when there is notes save -->
+    <!-- Display when there is notes saved -->
     <div class="notes absolute left-0 top-20 z-20" v-show="notes.length !== 0">
       <div class="notes-list relative container mx-auto pt-16 pl-10 flex flex-wrap">
-        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in notes" :key="index" @click="showDetail(index)">
-          <h2 class="text-2xl font-medium leading-6">
+        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in searchNote" :key="index" @click="showDetail(index)">
+          <h2 class="note-item-title text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
           <p class="text-lg text-mydark font-medium mt-1">{{ item.date }}</p>
+          <p>{{ index }}</p>
         </div>
       </div>
     </div>
@@ -85,7 +87,9 @@
             <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="deleteNote">
               <img src="~/assets/icons/trash.svg" alt="trash icon" class="w-6 h-6 py-1">
             </button>
-            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl ml-2" @click="editNote">
+            <button
+            class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl ml-2"
+            @click="editNote(noteDetail, noteIndex)">
               edit
             </button>
           </div>
@@ -103,6 +107,33 @@
         </div>
       </div>
     </div>
+    <!-- Form to edit the note create -->
+    <div v-show="edit" class="new-note fixed top-0 left-0 h-screen flex items-center justify-center bg-mygreen z-50">
+      <div class="form-field border border-mydark bg-myblack rounded-xl">
+        <div class="form-nav w-full h-12 mt-4 flex items-center justify-between">
+          <div class="cancel-btn ml-4">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="cancelEditNote">
+              cancel
+            </button>
+          </div>
+          <div class="save-btn mr-4">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="saveEditNote(noteIndex)">
+              save
+            </button>
+          </div>
+        </div>
+        <div class="form px-5 mt-8">
+          <input
+          type="text"
+          name="title"
+          id="editTitle"
+          autocomplete="off"
+          placeholder="Title"
+          class="outline-none w-full h-12 bg-transparent text-3xl text-white">
+          <textarea name="text" id="editText" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -111,16 +142,36 @@ export default {
   data () {
     return {
       newNote: false,
+      edit: false,
       color: 'myfade-brown',
       notes: [],
       noteDetail: '',
       noteIndex: 0,
-      showNoteDetail: false
+      showNoteDetail: false,
+      searchValue: '',
+      filterResult: ''
     }
   },
   mounted () {
     if (localStorage.getItem('notes')) {
       this.notes = JSON.parse(localStorage.getItem('notes'))
+    }
+  },
+  computed: {
+    searchNote () {
+      if (!this.searchValue) {
+        return this.notes
+      }
+      return this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
+      // return this.filterResult
+    }
+  },
+  watch: {
+    searchNote: {
+      deep: true,
+      handler: function (newVal) {
+        this.filterResult = newVal
+      }
     }
   },
   methods: {
@@ -216,8 +267,29 @@ export default {
       this.showNoteDetail = !this.showNoteDetail
     },
     // function to edit note when it already create
-    editNote () {
-      return 'bonjour'
+    editNote (item, index) {
+      const title = document.querySelector('#editTitle')
+      const content = document.querySelector('#editText')
+      // const noteIndex = document.querySelector('#index')
+      // this.newNote = !this.newNote
+      this.edit = !this.edit
+      this.showNoteDetail = !this.showNoteDetail
+      title.value = item.title
+      content.value = item.content
+      // noteIndex.innerHTML = index
+    },
+    saveEditNote (index) {
+      const title = document.querySelector('#editTitle')
+      const content = document.querySelector('#editText')
+      this.notes[index].title = title.value
+      this.notes[index].content = content.value
+      localStorage.setItem('notes', JSON.stringify(this.notes))
+      this.edit = !this.edit
+      this.showNoteDetail = !this.showNoteDetail
+    },
+    cancelEditNote () {
+      this.edit = !this.edit
+      this.showNoteDetail = !this.showNoteDetail
     },
     // function to delete note
     deleteNote () {
