@@ -15,7 +15,8 @@
       placeholder="Search a note..."
       autocomplete="off"
       class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
-      v-model="searchValue">
+      v-model="searchValue"
+      @keyup="filterNote">
     </div>
     <button class="fixed bottom-12 right-10 text-white bg-black px-6 py-3 rounded-xl z-50" @click="createNote">
       New note +
@@ -65,7 +66,7 @@
     <!-- Display when there is notes saved -->
     <div class="notes absolute left-0 top-20 z-20" v-show="notes.length !== 0">
       <div class="notes-list relative container mx-auto pt-16 pl-10 flex flex-wrap">
-        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in searchNote" :key="index" @click="showDetail(index)">
+        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in notes" :key="index" @click="showDetail(index)">
           <h2 class="note-item-title text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
@@ -155,26 +156,19 @@ export default {
   mounted () {
     if (localStorage.getItem('notes')) {
       this.notes = JSON.parse(localStorage.getItem('notes'))
-    }
-  },
-  computed: {
-    searchNote () {
-      if (!this.searchValue) {
-        return this.notes
-      }
-      return this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
-      // return this.filterResult
-    }
-  },
-  watch: {
-    searchNote: {
-      deep: true,
-      handler: function (newVal) {
-        this.filterResult = newVal
-      }
+      this.filterResult = JSON.parse(localStorage.getItem('notes'))
     }
   },
   methods: {
+    // filter function
+    filterNote () {
+      if (this.searchValue === '') {
+        this.notes = JSON.parse(localStorage.getItem('notes'))
+        this.filterResult = JSON.parse(localStorage.getItem('notes'))
+      }
+      this.notes = this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
+      this.filterResult = this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
+    },
     // funtion to show new note form
     createNote () {
       this.newNote = !this.newNote
