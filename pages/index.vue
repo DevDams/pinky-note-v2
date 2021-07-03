@@ -9,14 +9,15 @@
     <!-- Button to add new note -->
     <div class="add-note-btn relative h-20 -top-20 container mx-auto z-10">
       <input
-      type="text"
-      name="search"
-      id="search"
-      placeholder="Search a note..."
-      autocomplete="off"
-      class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
-      v-model="searchValue"
-      @keyup="filterNote">
+        id="search"
+        v-model="searchValue"
+        type="text"
+        name="search"
+        placeholder="Search a note..."
+        autocomplete="off"
+        class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
+        @keyup="filterNote"
+      >
     </div>
     <button class="fixed bottom-12 right-10 text-white bg-black px-6 py-3 rounded-xl z-50" @click="createNote">
       New note +
@@ -38,13 +39,14 @@
         </div>
         <div class="form px-5 mt-8">
           <input
-          type="text"
-          name="title"
-          id="title"
-          autocomplete="off"
-          placeholder="Title"
-          class="outline-none w-full h-12 bg-transparent text-3xl text-white">
-          <textarea name="text" id="text" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
+            id="title"
+            type="text"
+            name="title"
+            autocomplete="off"
+            placeholder="Title"
+            class="outline-none w-full h-12 bg-transparent text-3xl text-white"
+          >
+          <textarea id="text" name="text" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
         </div>
         <div class="color-palette flex w-full px-5">
           <div class="green w-7 h-7 rounded-full border border-white bg-mygreen" @click="chooseColor"></div>
@@ -56,27 +58,27 @@
     </div>
     <!-- Display when there is no note to display -->
     <div
-    class="empty-note absolute top-0 left-0 h-screen w-screen flex flex-col items-center justify-center"
-    v-show="notes.length === 0">
+      v-show="notes.length === 0"
+      class="empty-note absolute top-0 left-0 h-screen w-screen flex flex-col items-center justify-center"
+    >
       <img src="~/assets/icons/warning.svg" alt="warming icon" class="w-14">
       <p class="text-white text-lg mt-4">
         No note saved.
       </p>
     </div>
     <!-- Display when there is notes saved -->
-    <div class="notes absolute left-0 top-20 z-20" v-show="notes.length !== 0">
+    <div v-show="notes.length !== 0" class="notes absolute left-0 top-20 z-20">
       <div class="notes-list relative container mx-auto pt-16 pl-10 flex flex-wrap">
-        <div class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" v-for="(item, index) in notes" :key="index" @click="showDetail(index)">
+        <div v-for="(item, index) in filterResult" :key="index" class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" @click="showDetail(item.title, index)">
           <h2 class="note-item-title text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
-          <p class="text-lg text-mydark font-medium mt-1">{{ item.date }}</p>
-          <p>{{ index }}</p>
+          <p class="text-lg text-mydark font-medium mt-2">{{ item.date }}</p>
         </div>
       </div>
     </div>
     <!-- Display the note details -->
-    <div class="new-note fixed top-0 left-0 h-screen flex items-center justify-center bg-mygreen z-50" v-show="showNoteDetail">
+    <div v-show="showNoteDetail" class="new-note fixed top-0 left-0 h-screen flex items-center justify-center bg-mygreen z-50">
       <div class="form-field border border-mydark bg-myblack rounded-xl">
         <div class="form-nav w-full h-12 mt-4 flex items-center justify-between">
           <div class="cancel-btn ml-4">
@@ -85,18 +87,19 @@
             </button>
           </div>
           <div class="save-btn mr-4 flex items-center">
-            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="deleteNote">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="deleteNote(indexInNotes, indexInFilter)">
               <img src="~/assets/icons/trash.svg" alt="trash icon" class="w-6 h-6 py-1">
             </button>
             <button
-            class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl ml-2"
-            @click="editNote(noteDetail, noteIndex)">
+              class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl ml-2"
+              @click="editNote(indexInNotes)"
+            >
               edit
             </button>
           </div>
         </div>
         <div class="form relative px-5 mt-8">
-          <h2 class="title text-3xl text-white font-semibold">
+          <h2 class="title text-3xl text-white font-medium">
             {{ noteDetail.title }}
           </h2>
           <p class="date text-mydark text-lg font-medium mt-4">
@@ -118,20 +121,21 @@
             </button>
           </div>
           <div class="save-btn mr-4">
-            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="saveEditNote(noteIndex)">
+            <button class="font-medium text-lg text-white bg-mydark px-3 py-1 rounded-xl" @click="saveEditNote(indexInNotes, indexInFilter)">
               save
             </button>
           </div>
         </div>
         <div class="form px-5 mt-8">
           <input
-          type="text"
-          name="title"
-          id="editTitle"
-          autocomplete="off"
-          placeholder="Title"
-          class="outline-none w-full h-12 bg-transparent text-3xl text-white">
-          <textarea name="text" id="editText" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
+            id="editTitle"
+            type="text"
+            name="title"
+            autocomplete="off"
+            placeholder="Title"
+            class="outline-none w-full h-12 bg-transparent text-3xl text-white"
+          >
+          <textarea id="editText" name="text" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
         </div>
       </div>
     </div>
@@ -144,10 +148,12 @@ export default {
     return {
       newNote: false,
       edit: false,
-      color: 'myfade-brown',
+      color: 'white',
       notes: [],
       noteDetail: '',
       noteIndex: 0,
+      indexInFilter: 0,
+      indexInNotes: 0,
       showNoteDetail: false,
       searchValue: '',
       filterResult: ''
@@ -163,16 +169,15 @@ export default {
     // filter function
     filterNote () {
       if (this.searchValue === '') {
-        this.notes = JSON.parse(localStorage.getItem('notes'))
-        this.filterResult = JSON.parse(localStorage.getItem('notes'))
+        this.filterResult = this.notes
+        // this.notes = JSON.parse(localStorage.getItem('notes'))
       }
-      this.notes = this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
-      this.filterResult = this.notes.filter(item => item.title.toLowerCase().includes(this.searchValue))
+      this.filterResult = this.filterResult.filter(item => item.title.toLowerCase().includes(this.searchValue))
     },
     // funtion to show new note form
     createNote () {
       this.newNote = !this.newNote
-      this.color = 'myfade-brown'
+      this.color = 'white'
       const title = document.querySelector('#title')
       const content = document.querySelector('#text')
       title.value = ''
@@ -237,6 +242,7 @@ export default {
       // check if note field is empty
       if (note.title !== '' || note.content !== '') {
         this.notes.push(note)
+        this.filterResult.push(note)
         this.newNote = !this.newNote
         this.color = ''
         // save notes array to local storage
@@ -251,32 +257,40 @@ export default {
       this.newNote = !this.newNote
     },
     // function to show note detail
-    showDetail (index) {
+    showDetail (itemTitle, index) {
+      for (let i = 0; i < this.notes.length; i++) {
+        if (this.notes[i].title === itemTitle) {
+          this.indexInNotes = i
+        }
+      }
+      for (let i = 0; i < this.filterResult.length; i++) {
+        if (this.filterResult[i].title === itemTitle) {
+          this.indexInFilter = i
+        }
+      }
       this.showNoteDetail = !this.showNoteDetail
-      this.noteIndex = index
-      this.noteDetail = this.notes[index]
+      this.noteDetail = this.filterResult[index]
     },
     // function to close note detail
     closeNote () {
       this.showNoteDetail = !this.showNoteDetail
     },
     // function to edit note when it already create
-    editNote (item, index) {
+    editNote (index) {
       const title = document.querySelector('#editTitle')
       const content = document.querySelector('#editText')
-      // const noteIndex = document.querySelector('#index')
-      // this.newNote = !this.newNote
       this.edit = !this.edit
       this.showNoteDetail = !this.showNoteDetail
-      title.value = item.title
-      content.value = item.content
-      // noteIndex.innerHTML = index
+      title.value = this.notes[index].title
+      content.value = this.notes[index].content
     },
-    saveEditNote (index) {
+    saveEditNote (index1, index2) {
       const title = document.querySelector('#editTitle')
       const content = document.querySelector('#editText')
-      this.notes[index].title = title.value
-      this.notes[index].content = content.value
+      this.notes[index1].title = title.value
+      this.notes[index1].content = content.value
+      this.filterResult[index2].title = title.value
+      this.filterResult[index2].content = content.value
       localStorage.setItem('notes', JSON.stringify(this.notes))
       this.edit = !this.edit
       this.showNoteDetail = !this.showNoteDetail
@@ -286,13 +300,13 @@ export default {
       this.showNoteDetail = !this.showNoteDetail
     },
     // function to delete note
-    deleteNote () {
+    deleteNote (index1, index2) {
       this.showNoteDetail = !this.showNoteDetail
-      if (this.noteIndex > -1) {
-        this.notes.splice(this.noteIndex, 1)
+      if (index1 > -1 && index2 > -1) {
+        this.notes.splice(index1, 1)
+        this.filterResult.splice(index2, 1)
         localStorage.setItem('notes', JSON.stringify(this.notes))
       }
-      this.noteIndex = 0
     }
   }
 }
