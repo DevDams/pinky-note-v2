@@ -19,7 +19,7 @@
         @keyup="filterNote"
       >
     </div>
-    <button class="fixed bottom-12 right-10 text-white bg-black px-6 py-3 rounded-xl z-50" @click="createNote">
+    <button class="fixed bottom-12 right-10 text-white bg-gray-600 px-6 py-3 rounded-xl z-50" @click="createNote">
       New note +
     </button>
     <!-- Form to diplay when typing new note -->
@@ -68,8 +68,8 @@
     </div>
     <!-- Display when there is notes saved -->
     <div v-show="notes.length !== 0" class="notes absolute left-0 top-20 z-20">
-      <div class="notes-list relative container mx-auto pt-16 pl-10 flex flex-wrap">
-        <div v-for="(item, index) in filterResult" :key="index" class="notes-item relative w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" @click="showDetail(item.title, index)">
+      <div class="notes-list relative container mx-auto pt-16 lg:pl-10 flex flex-wrap">
+        <div v-for="(item, index) in filterResult" :key="index" class="notes-item relative sm:w-72 md:w-60 lg:w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" @click="showDetail(item.title, index)">
           <h2 class="note-item-title text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
