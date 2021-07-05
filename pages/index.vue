@@ -242,7 +242,7 @@ export default {
       // check if note field is empty
       if (note.title !== '' || note.content !== '') {
         this.notes.push(note)
-        this.filterResult.push(note)
+        // this.filterResult.push(note)
         this.newNote = !this.newNote
         this.color = ''
         // save notes array to local storage
