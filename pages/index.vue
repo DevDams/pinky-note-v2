@@ -1,26 +1,37 @@
 <template>
   <div class="relative h-screen">
-    <!-- Navbar -->
-    <div class="navbar relative top-0 container h-20 mx-auto flex items-center justify-between z-10">
-      <h2 class="text-4xl text-white">
-        Notes
-      </h2>
+    <div class="header bg-myblack fixed flex items-center h-16 w-full z-50">
+      <div class="container mx-auto flex items-center">
+        <!-- Navbar -->
+        <div class="navbar relative top-0 container h-10 mx-auto flex items-center justify-between z-10">
+          <h2 class="text-4xl text-white">
+            Notes
+          </h2>
+        </div>
+        <!-- Button to add new note -->
+        <div class="filter-note-btn relative h-10 -top-20 container mx-auto z-10">
+          <input
+            id="search"
+            v-model="searchValue"
+            type="text"
+            name="search"
+            placeholder="Search a note..."
+            autocomplete="off"
+            class="absolute top-6 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
+            :class="{ 'hide' : showSearch }"
+            @keyup="filterNote"
+          >
+          <div class="search-icon absolute right-0 mr-5 mt-16 top-5 h-10 w-10 rounded-lg bg-mydark flex items-center justify-center" @click="showSearchBar">
+            <svg viewBox="0 0 512 512" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M349.714 347.937l93.714 109.969-16.254 13.969-93.969-109.969q-48.508 36.825-109.207 36.825-36.826 0-70.476-14.349t-57.905-38.603-38.603-57.905-14.349-70.476 14.349-70.476 38.603-57.905 57.905-38.603 70.476-14.349 70.476 14.349 57.905 38.603 38.603 57.905 14.349 70.476q0 37.841-14.73 71.619t-40.889 58.921zM224 377.397q43.428 0 80.254-21.461t58.286-58.286 21.461-80.254-21.461-80.254-58.286-58.285-80.254-21.46-80.254 21.46-58.285 58.285-21.46 80.254 21.46 80.254 58.285 58.286 80.254 21.461z" fill="#fff" fill-rule="#fff"></path></svg>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- Button to add new note -->
-    <div class="add-note-btn relative h-20 -top-20 container mx-auto z-10">
-      <input
-        id="search"
-        v-model="searchValue"
-        type="text"
-        name="search"
-        placeholder="Search a note..."
-        autocomplete="off"
-        class="absolute top-5 right-0 h-10 w-64 rounded-lg pl-3 bg-mydark outline-none z-50"
-        @keyup="filterNote"
-      >
-    </div>
-    <button class="fixed bottom-12 right-10 text-white bg-gray-600 px-6 py-3 rounded-xl z-50" @click="createNote">
-      New note +
+    <button class="add-new-note-btn fixed flex items-center bottom-12 text-white font-semibold bg-mydark px-5 py-2 rounded-xl z-50" @click="createNote">
+      New note <span class="text-xl ml-3">+</span>
+    </button>
+    <button class="add-new-note-mob-btn fixed flex items-center justify-center bottom-10 text-white font-medium bg-mydark px-5 py-3 rounded-full z-50" @click="createNote">
+      <span class="text-4xl">+</span>
     </button>
     <!-- Form to diplay when typing new note -->
     <div v-show="newNote" class="new-note fixed top-0 left-0 h-screen flex items-center justify-center bg-mygreen z-50">
@@ -68,8 +79,8 @@
     </div>
     <!-- Display when there is notes saved -->
     <div v-show="notes.length !== 0" class="notes absolute left-0 top-20 z-20">
-      <div class="notes-list relative container mx-auto pt-16 lg:pl-10 flex flex-wrap">
-        <div v-for="(item, index) in filterResult" :key="index" class="notes-item relative sm:w-72 md:w-60 lg:w-56 p-4 ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" @click="showDetail(item.title, index)">
+      <div class="notes-list relative sm:container w-11/12 mx-auto pt-16 sm:pl-3 lg:pl-10 flex flex-wrap">
+        <div v-for="(item, index) in filterResult" :key="index" class="notes-item relative sm:w-72 md:w-60 lg:w-56 p-4 mr-2 sm:mr-0 sm:ml-2 mt-2 rounded-xl z-10" :class="`bg-${item.bgColor}`" @click="showDetail(item.title, index)">
           <h2 class="note-item-title text-2xl font-medium leading-6">
             {{ item.title }}
           </h2>
@@ -156,11 +167,13 @@ export default {
       indexInNotes: 0,
       showNoteDetail: false,
       searchValue: '',
-      filterResult: ''
+      filterResult: '',
+      showSearch: true
     }
   },
   mounted () {
     if (localStorage.getItem('notes')) {
+      this.showSearch = true
       this.notes = JSON.parse(localStorage.getItem('notes'))
       this.filterResult = JSON.parse(localStorage.getItem('notes'))
     }
@@ -307,6 +320,9 @@ export default {
         this.filterResult.splice(index2, 1)
         localStorage.setItem('notes', JSON.stringify(this.notes))
       }
+    },
+    showSearchBar () {
+      this.showSearch = !this.showSearch
     }
   }
 }
@@ -325,6 +341,24 @@ textarea {
   color: #eaeaea;
 }
 
+.navbar h2 {
+  padding-left: 20px;
+}
+
+.filter-note-btn input {
+  margin-right: 20px;
+  top: 83px;
+  color: white;
+}
+
+.search-icon {
+  visibility: hidden;
+}
+
+.add-new-note-mob-btn {
+  visibility: hidden;
+}
+
 .empty-note {
   z-index: 0;
 }
@@ -336,6 +370,7 @@ textarea {
 
 .notes {
   width: 100%;
+  padding-bottom: 100px;
 }
 
 .form-field {
@@ -357,5 +392,90 @@ textarea {
 
 .trash {
   z-index: 99 !important;
+}
+
+@media (min-width: 1536px) {
+  .add-new-note-btn {
+    right: 150px;
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1536px) {
+  .add-new-note-btn {
+    right: 100px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .add-new-note-btn {
+    right: 100px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .add-new-note-btn {
+    right: 90px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .add-new-note-btn {
+    right: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-new-note-btn {
+    visibility: hidden;
+  }
+
+  .add-new-note-mob-btn {
+    right: 60px;
+    visibility: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .add-new-note-btn {
+    right: 40px;
+  }
+
+  .add-new-note-mob-btn {
+    right: 30px;
+  }
+
+  .form-field {
+    width: 380px;
+  }
+}
+
+@media (max-width: 420px) {
+  .search-icon {
+    visibility: visible;
+  }
+
+  .filter-note-btn input {
+    top: 130px;
+    transition: .1s all ease-in-out;
+  }
+
+  .filter-note-btn input.hide {
+    visibility: hidden;
+    top: 100px;
+  }
+
+  .add-new-note-mob-btn {
+    right: 20px;
+  }
+
+  .form-field {
+    width: 350px;
+  }
+}
+
+@media (max-width: 410px) {
+  .form-field {
+    width: 90%;
+  }
 }
 </style>
