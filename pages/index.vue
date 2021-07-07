@@ -60,10 +60,10 @@
           <textarea id="text" name="text" placeholder="Type something..." class="outline-none w-full h-72 text-white text-lg pt-2 mt-4 bg-transparent"></textarea>
         </div>
         <div class="color-palette flex w-full px-5">
-          <div class="green w-7 h-7 rounded-full border border-white bg-mygreen" @click="chooseColor"></div>
-          <div class="red w-7 h-7 rounded-full border border-white bg-myred ml-4" @click="chooseColor"></div>
-          <div class="fade-brown w-7 h-7 rounded-full border border-white bg-myfade-brown ml-4" @click="chooseColor"></div>
-          <div class="bold-brown w-7 h-7 rounded-full border border-white bg-mybold-brown ml-4" @click="chooseColor"></div>
+          <div class="green w-7 h-7 rounded-full border border-white bg-mygreen" @click="chooseColorGreen"></div>
+          <div class="red w-7 h-7 rounded-full border border-white bg-myred ml-4" @click="chooseColorRed"></div>
+          <div class="fade-brown w-7 h-7 rounded-full border border-white bg-myfade-brown ml-4" @click="chooseColorFade"></div>
+          <div class="bold-brown w-7 h-7 rounded-full border border-white bg-mybold-brown ml-4" @click="chooseColorBold"></div>
         </div>
       </div>
     </div>
@@ -159,7 +159,7 @@ export default {
     return {
       newNote: false,
       edit: false,
-      color: 'white',
+      color: 'myfade-brown',
       notes: [],
       noteDetail: '',
       noteIndex: 0,
@@ -190,46 +190,55 @@ export default {
     // funtion to show new note form
     createNote () {
       this.newNote = !this.newNote
-      this.color = 'white'
+      this.color = 'myfade-brown'
       const title = document.querySelector('#title')
       const content = document.querySelector('#text')
       title.value = ''
       content.value = ''
     },
-    // funtion to choose note color
-    chooseColor () {
-      const red = document.querySelector('.red')
+    chooseColorGreen () {
+      this.color = 'mygreen'
       const green = document.querySelector('.green')
+      const red = document.querySelector('.red')
       const fadeBrown = document.querySelector('.fade-brown')
       const BoldBrown = document.querySelector('.bold-brown')
-      red.addEventListener('click', () => {
-        this.color = 'myred'
-        red.style.borderWidth = '3px'
-        green.style.borderWidth = '1px'
-        fadeBrown.style.borderWidth = '1px'
-        BoldBrown.style.borderWidth = '1px'
-      })
-      green.addEventListener('click', () => {
-        this.color = 'mygreen'
-        green.style.borderWidth = '3px'
-        red.style.borderWidth = '1px'
-        fadeBrown.style.borderWidth = '1px'
-        BoldBrown.style.borderWidth = '1px'
-      })
-      fadeBrown.addEventListener('click', () => {
-        this.color = 'myfade-brown'
-        fadeBrown.style.borderWidth = '3px'
-        green.style.borderWidth = '1px'
-        red.style.borderWidth = '1px'
-        BoldBrown.style.borderWidth = '1px'
-      })
-      BoldBrown.addEventListener('click', () => {
-        this.color = 'mybold-brown'
-        BoldBrown.style.borderWidth = '3px'
-        green.style.borderWidth = '1px'
-        fadeBrown.style.borderWidth = '1px'
-        red.style.borderWidth = '1px'
-      })
+      green.style.borderWidth = '3px'
+      red.style.borderWidth = '1px'
+      fadeBrown.style.borderWidth = '1px'
+      BoldBrown.style.borderWidth = '1px'
+    },
+    chooseColorRed () {
+      this.color = 'myred'
+      const green = document.querySelector('.green')
+      const red = document.querySelector('.red')
+      const fadeBrown = document.querySelector('.fade-brown')
+      const BoldBrown = document.querySelector('.bold-brown')
+      green.style.borderWidth = '1px'
+      red.style.borderWidth = '3px'
+      fadeBrown.style.borderWidth = '1px'
+      BoldBrown.style.borderWidth = '1px'
+    },
+    chooseColorFade () {
+      this.color = 'myfade-brown'
+      const green = document.querySelector('.green')
+      const red = document.querySelector('.red')
+      const fadeBrown = document.querySelector('.fade-brown')
+      const BoldBrown = document.querySelector('.bold-brown')
+      green.style.borderWidth = '1px'
+      red.style.borderWidth = '1px'
+      fadeBrown.style.borderWidth = '3px'
+      BoldBrown.style.borderWidth = '1px'
+    },
+    chooseColorBold () {
+      this.color = 'mybold-brown'
+      const green = document.querySelector('.green')
+      const red = document.querySelector('.red')
+      const fadeBrown = document.querySelector('.fade-brown')
+      const BoldBrown = document.querySelector('.bold-brown')
+      green.style.borderWidth = '1px'
+      red.style.borderWidth = '1px'
+      fadeBrown.style.borderWidth = '1px'
+      BoldBrown.style.borderWidth = '3px'
     },
     // function to save new note
     saveNote () {
