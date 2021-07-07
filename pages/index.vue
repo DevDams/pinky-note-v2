@@ -322,11 +322,11 @@ export default {
       this.showNoteDetail = !this.showNoteDetail
     },
     // function to delete note
-    deleteNote (index1, index2) {
+    deleteNote (index1) {
       this.showNoteDetail = !this.showNoteDetail
-      if (index1 > -1 && index2 > -1) {
+      if (index1 > -1) {
         this.notes.splice(index1, 1)
-        this.filterResult.splice(index2, 1)
+        this.filterResult = this.notes
         localStorage.setItem('notes', JSON.stringify(this.notes))
       }
     },
