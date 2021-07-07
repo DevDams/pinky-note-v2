@@ -30,7 +30,7 @@
     <button class="add-new-note-btn fixed flex items-center bottom-12 text-white font-semibold bg-mydark px-5 py-2 rounded-xl z-50" @click="createNote">
       New note <span class="text-xl ml-3">+</span>
     </button>
-    <button class="add-new-note-mob-btn fixed flex items-center justify-center bottom-10 text-white font-medium bg-mydark px-5 py-3 rounded-full z-50" @click="createNote">
+    <button class="add-new-note-mob-btn fixed flex items-center justify-center bottom-10 text-white font-medium bg-mydark px-4 py-2 rounded-full z-50" @click="createNote">
       <span class="text-4xl">+</span>
     </button>
     <!-- Form to diplay when typing new note -->
